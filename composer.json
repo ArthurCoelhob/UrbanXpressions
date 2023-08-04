@@ -1,0 +1,10 @@
+{
+    "name": "arthur/loja",
+    "authors": [
+        {
+            "name": "Arthur Coelho",
+            "email": "arthurcoelhoob@gmail.com"
+        }
+    ],
+    "require": {}
+}
