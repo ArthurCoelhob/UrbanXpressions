@@ -1,7 +1,7 @@
 <template>
     <v-container>
 
-        <FilterComponent @filter-items="filterItems" />
+        <FilterComponent @filter-products="filterProducts" />
       <v-row justify="center" class="mb-5">
         <v-col cols="12" md="8">
           <v-divider class="mt-2 mb-4"></v-divider>
@@ -9,19 +9,19 @@
       </v-row>
   
       <v-row justify="center">
-        <v-col cols="12" md="4" lg="3" v-for="(item, index) in items" :key="index">
+        <v-col cols="12" md="4" lg="3" v-for="(product, index) in products" :key="index">
           <v-card class="mb-4">
-            <v-img :src="item.image" height="200"></v-img>
-            <v-card-title class="text-h6">{{ item.title }}</v-card-title>
-            <v-card-subtitle class="text-body-2">{{ item.subtitle }}</v-card-subtitle>
-            <v-card-text class="text-body-1">{{ item.description }}</v-card-text>
+            <v-img :src="product.image" height="200"></v-img>
+            <v-card-title class="text-h6">{{ product.title }}</v-card-title>
+            <v-card-subtitle class="text-body-2">{{ product.subtitle }}</v-card-subtitle>
+            <v-card-text class="text-body-1">{{ product.description }}</v-card-text>
   
             
             <v-card-actions class="justify-center">
               <v-btn icon @click="addToCart(index)">
                 <v-icon>mdi-cart</v-icon>
               </v-btn>
-              <v-btn icon @click="likeItem(index)">
+              <v-btn icon @click="likeProduct(index)">
                 <v-icon>mdi-heart</v-icon>
               </v-btn>
             </v-card-actions>
@@ -34,8 +34,9 @@
   <script lang="ts">
   import { Vue, Component } from 'vue-property-decorator';
   import FilterComponent from './FilterComponent.vue';
+  import axios from 'axios';
   
-  interface ContentItem {
+  interface ContentProduct {
     image: string;
     title: string;
     subtitle: string;
@@ -48,43 +49,40 @@
   },
 })
   export default class ContentListComponent extends Vue {
-    items: ContentItem[] = [];
-    filteredItems: ContentItem[] = [];
+    products: ContentProduct[] = [];
+    filteredItems: ContentProduct[] = [];
     created() {
-      
-      this.generateItems(10);
+      this.getProductsAll();
     }
-    //exemplo para criação de itens
-    generateItems(count: number): void {
-      for (let i = 1; i <= count; i++) {
-        this.items.push({
-          image: `https://source.unsplash.com/random/400x400?item=${i}`,
-          title: `Item ${i}`,
-          subtitle: `Subtitle ${i}`,
-          description: `Description for item ${i}.`
-        });
-      }
+
+    private async getProductsAll() {
+    try {
+      const response = await axios.get('http://127.0.0.1:8001/api/products');
+      this.products = response.data;
+    } catch (error) {
+      console.error('Erro ao buscar os produtos:', error);
     }
+  }
   
     addToCart(index: number): void {
       
-      console.log('Item adicionado ao carrinho:', this.items[index]);
+      console.log('Item adicionado ao carrinho:', this.products[index]);
     }
   
-    likeItem(index: number): void {
+    likeProduct(index: number): void {
       
-      console.log('Usuário gostou do item:', this.items[index]);
+      console.log('Usuário gostou do item:', this.products[index]);
     }
 
-    filterItems(searchTerm: string): void {
+    filterProducts(searchTerm: string): void {
     if (!searchTerm) {
-      this.filteredItems = this.items;
+      this.filteredItems = this.products;
     } else {
-      this.filteredItems = this.items.filter(
-        (item) =>
-          item.title.toLowerCase().includes(searchTerm) ||
-          item.subtitle.toLowerCase().includes(searchTerm) ||
-          item.description.toLowerCase().includes(searchTerm)
+      this.filteredItems = this.products.filter(
+        (product) =>
+          product.title.toLowerCase().includes(searchTerm) ||
+          product.subtitle.toLowerCase().includes(searchTerm) ||
+          product.description.toLowerCase().includes(searchTerm)
       );
     }
   }
