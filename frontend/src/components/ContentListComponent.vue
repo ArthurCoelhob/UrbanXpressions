@@ -57,7 +57,7 @@
 
     private async getProductsAll() {
     try {
-      const response = await axios.get('http://127.0.0.1:8001/api/products');
+      const response = await axios.get('http://127.0.0.1:8000/api/products');
       this.products = response.data;
     } catch (error) {
       console.error('Erro ao buscar os produtos:', error);
