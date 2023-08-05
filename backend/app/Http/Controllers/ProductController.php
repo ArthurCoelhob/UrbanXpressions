@@ -17,8 +17,7 @@ class ProductController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
-        
+    {       
         $products = Product::all();
         return response()->json($products, 200);
     }
@@ -82,7 +81,9 @@ class ProductController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
-    {
-    
+    {   
+        $product = Product::findOrFail($id);
+        $product->delete();
+        return response()->json(['Produto deletado com sucesso'],200);
     }
 }

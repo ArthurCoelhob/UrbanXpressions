@@ -14,7 +14,8 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        $categories = Category::all();
+        return response()->json($categories, 200);
     }
 
     /**
@@ -88,6 +89,10 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $category = Category::findOrFail($id);
+        $category->products()->delete();
+        $category->delete();
+
+        return response()->json(['Categoria e produtos deletados com sucesso'], 200);
     }
 }
