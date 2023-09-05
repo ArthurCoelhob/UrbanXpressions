@@ -41,6 +41,7 @@
     title: string;
     subtitle: string;
     description: string;
+    category_id: number;
   }
   
   @Component({
@@ -50,7 +51,7 @@
 })
   export default class ContentListComponent extends Vue {
     products: ContentProduct[] = [];
-    filteredItems: ContentProduct[] = [];
+    filteredProducts: ContentProduct[] = [];
     created() {
       this.getProductsAll();
     }
@@ -74,17 +75,13 @@
       console.log('Usuário gostou do item:', this.products[index]);
     }
 
-    filterProducts(searchTerm: string): void {
-    if (!searchTerm) {
-      this.filteredItems = this.products;
-    } else {
-      this.filteredItems = this.products.filter(
-        (product) =>
-          product.title.toLowerCase().includes(searchTerm) ||
-          product.subtitle.toLowerCase().includes(searchTerm) ||
-          product.description.toLowerCase().includes(searchTerm)
-      );
-    }
+    async filterProducts(filterOption: number) {
+      try {
+        const response = await axios.get(`http://127.0.0.1:8000/api/products/search?category_id=${filterOption}`);
+        this.filteredProducts = response.data;
+      } catch (error) {
+        console.error('Erro ao filtrar produtos:', error);
+      }
   }
 
   }

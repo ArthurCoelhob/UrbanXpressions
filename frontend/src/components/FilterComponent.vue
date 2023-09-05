@@ -1,16 +1,6 @@
 <template>
     <v-row justify="center" class="mb-4">
       <v-col cols="12" md="8">
-        <v-text-field
-          v-model="searchTerm"
-          label="Busca por tipo de produto"
-          outlined
-          class="search-input"
-          hide-details
-          dense
-          clearable
-          @input="applyFilter"
-        ></v-text-field>
         <v-select
           v-model="filterOption"
           :items="filterOptions"
@@ -19,25 +9,39 @@
           class="filter-select"
           dense
           @change="applyFilter"
-        ></v-select>
+        >
+      </v-select>
       </v-col>
     </v-row>
   </template>
   
   <script lang="ts">
   import { Vue, Component, Prop } from 'vue-property-decorator';
-  
+  import axios from 'axios';
+
   @Component
   export default class FilterComponent extends Vue {
     @Prop() items!: any[];
-  
-    searchTerm  = '';
+    
+    filterOptions: { text: string; value: string }[] = [];
     filterOption  = 'tipo';
-  
-    filterOptions: string[] = ['Calça', 'Blusa'];
+
+    async created() {
+    await this.loadFilterOptions();
+  }
+
+  async loadFilterOptions() {
+    try {
+      const response = await axios.get('http://127.0.0.1:8000/api/categories');
+      this.filterOptions = response.data;
+      this.filterOptions = response.data.map((category: any) => ({ text: category.name, value: category.id }));
+    } catch (error) {
+      console.error('Erro ao carregar opções de filtro:', error);
+    }
+  }
   
     applyFilter(): void {
-      this.$emit('filter-items', this.searchTerm.trim().toLowerCase(), this.filterOption);
+      this.$emit('filter-products', this.filterOption);
     }
   }
   </script>

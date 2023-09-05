@@ -13,4 +13,19 @@ class Product extends Model
     {
         return $this->belongsTo(Category::class);
     }
+
+    public function searchProducts($searchTerm, $filterOption)
+    {
+        $query = Product::query();
+
+        if($filterOption === '')
+        if ($filterOption === 'name') {
+            $query->where('name', 'LIKE', '%' . $searchTerm . '%');
+        } elseif ($filterOption === 'category_id') {
+            $query->where('category_id', 'LIKE', '%' . $searchTerm . '%');
+        }
+
+        $products = $query->get();
+        return $products;
+    }
 }
